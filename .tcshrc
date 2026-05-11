@@ -1,0 +1,111 @@
+# ~/.tcshrc
+
+# ------------------------------
+# History
+# ------------------------------
+set history = 100000
+set savehist = (100000 merge)
+set histfile = ~/.histfile
+bindkey '^R' i-search-back
+# ------------------------------
+# Variables
+# ------------------------------
+setenv BROWSER "firefox"
+setenv EDITOR "vim"
+setenv LS_COLORS 'rs=0:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:tw=30;42;ow=34;42:st=37;44:ex=01;32:'
+# ------------------------------
+# Aliases
+# ------------------------------
+if (`uname` == "Linux") then
+    alias ls 'ls --color -aF'
+    alias ll 'ls --color -lah'
+else if (`uname` == "FreeBSD") then
+    alias ls 'ls -G -aF'
+    alias ll 'ls -G -lah'
+else if (`uname` == "OpenBSD") then
+    alias ls 'ls -G -aF'
+    alias ll 'ls -G -lah'
+else if (`uname` == "Darwin") then
+    alias ll 'ls -G -lah'
+    alias ls 'ls -G -F'
+else
+    alias ll 'ls -lah'
+    alias ls 'ls -aF'
+endif
+
+alias diff 'diff -u --color'
+
+if ( -d /usr/local/emacs/bin ) then
+    set path = ( /usr/local/emacs/bin $path )
+endif
+# ------------------------------
+# Prompt
+# ------------------------------
+set prompt="%B%{\033[34m%}[%d %D.%w.%Y %P]%{\033[37m%} %? %n@%m %~ # %{\033[30m%}%b"
+# ------------------------------
+# Local stuff
+# ------------------------------
+set path = ( ${HOME}/bin $path )
+
+if ( -d "${HOME}/.yarn/bin" ) then
+    set path = ( ${HOME}/.yarn/bin $path )
+endif
+
+setenv LANGUAGE "en_IE"
+setenv LANG "en_IE.UTF-8"
+setenv LC_ALL "en_IE.UTF-8"
+# This might not be needed in case of tcsh...?
+if ( `uname` == "Darwin" ) then
+    setenv BASH_SILENCE_DEPRECATION_WARNING "1"
+    if ( -d /opt/homebrew/bin ) then
+        set path = ( /opt/homebrew/bin $path )
+    endif
+endif
+# ------------------------------
+# For screen + emacs
+# ------------------------------
+setenv TERM "xterm-256color"
+# ------------------------------
+# SSH using GPG keys
+# ------------------------------
+setenv SSH_AUTH_SOCK `gpgconf --list-dirs agent-ssh-socket`
+if ( ! -S "$SSH_AUTH_SOCK" ) then
+    setenv SSH_AUTH_SOCK ""
+    if ( -S "${HOME}/.gnupg/S.gpg-agent.ssh" ) then
+        setenv SSH_AUTH_SOCK "${HOME}/.gnupg/S.gpg-agent.ssh"
+    endif
+endif
+# ------------------------------
+# GPG keys
+# ------------------------------
+set KEY_ID = "289BD22DE72C1F968395D27344D6C3045E984B2D"
+# ------------------------------
+# Cargo
+# ------------------------------
+if ( -f "$HOME/.cargo/env" ) then
+    source "$HOME/.cargo/env"
+endif
+# ------------------------------
+# Brew
+# ------------------------------
+which brew >& /dev/null
+if ( $status == 0 ) then
+    set openssl_path = `brew --prefix openssl`
+    if ( -d "${openssl_path}" ) then
+        set path = ( ${openssl_path}/bin $path )
+    endif
+    unset openssl_path
+endif
+# ------------------------------
+# Completion
+# ------------------------------
+set filec
+set autolist
+set autocorrect
+# ------------------------------
+# Misc
+# ------------------------------
+bindkey '^[[1;3D' backward-word
+bindkey '^[[1;3C' forward-word
+bindkey "^W" backward-delete-word
+set autorehash

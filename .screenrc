@@ -1,0 +1,21 @@
+# Set prefix key to Ctrl-o
+escape ^Oo
+
+# Make Ctrl-o act like "send-prefix" (pass prefix through to nested screen/tmux)
+bind C-o stuff ^Oo
+
+# Enable mouse support (scrolling + pane selection where supported)
+mousetrack on
+
+# Optional but commonly useful
+term xterm-256color
+defscrollback 10000
+
+# Optional: reduce annoying visual noise
+vbell off
+
+# Log everything
+logfile flush 2
+logfile $HOME/screenlogs/screen.%Y-%m-%dT%c_%S:%n.log
+logtstamp off
+deflog on

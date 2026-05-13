@@ -54,27 +54,11 @@ endif
 setenv LANGUAGE "en_IE"
 setenv LANG "en_IE.UTF-8"
 setenv LC_ALL "en_IE.UTF-8"
-# This might not be needed in case of tcsh...?
-if ( `uname` == "Darwin" ) then
-    setenv BASH_SILENCE_DEPRECATION_WARNING "1"
-    if ( -d /opt/homebrew/bin ) then
-        set path = ( /opt/homebrew/bin $path )
-    endif
-endif
 # ------------------------------
 # For screen + emacs
 # ------------------------------
 setenv TERM "xterm-256color"
-# ------------------------------
-# SSH using GPG keys
-# ------------------------------
-setenv SSH_AUTH_SOCK `gpgconf --list-dirs agent-ssh-socket`
-if ( ! -S "$SSH_AUTH_SOCK" ) then
-    setenv SSH_AUTH_SOCK ""
-    if ( -S "${HOME}/.gnupg/S.gpg-agent.ssh" ) then
-        setenv SSH_AUTH_SOCK "${HOME}/.gnupg/S.gpg-agent.ssh"
-    endif
-endif
+bindkey "^[[3~" delete-char
 # ------------------------------
 # GPG keys
 # ------------------------------
@@ -86,15 +70,11 @@ if ( -f "$HOME/.cargo/env" ) then
     source "$HOME/.cargo/env"
 endif
 # ------------------------------
-# Brew
+# Only interactive below
 # ------------------------------
-which brew >& /dev/null
-if ( $status == 0 ) then
-    set openssl_path = `brew --prefix openssl`
-    if ( -d "${openssl_path}" ) then
-        set path = ( ${openssl_path}/bin $path )
-    endif
-    unset openssl_path
+if (! $?prompt) then
+    # Non-interactive mode - exit early or skip problematic sections
+    exit
 endif
 # ------------------------------
 # Completion
@@ -109,3 +89,31 @@ bindkey '^[[1;3D' backward-word
 bindkey '^[[1;3C' forward-word
 bindkey "^W" backward-delete-word
 set autorehash
+# ------------------------------
+# SSH using GPG keys
+# ------------------------------
+setenv SSH_AUTH_SOCK `gpgconf --list-dirs agent-ssh-socket`
+if ( ! -S "$SSH_AUTH_SOCK" ) then
+    setenv SSH_AUTH_SOCK ""
+    if ( -S "${HOME}/.gnupg/S.gpg-agent.ssh" ) then
+        setenv SSH_AUTH_SOCK "${HOME}/.gnupg/S.gpg-agent.ssh"
+    endif
+endif
+# ------------------------------
+# Brew
+# ------------------------------
+which brew >& /dev/null
+if ( $status == 0 ) then
+    set openssl_path = `brew --prefix openssl`
+    if ( -d "${openssl_path}" ) then
+        set path = ( ${openssl_path}/bin $path )
+    endif
+    unset openssl_path
+endif
+# This might not be needed in case of tcsh...?
+if ( `uname` == "Darwin" ) then
+    setenv BASH_SILENCE_DEPRECATION_WARNING "1"
+    if ( -d /opt/homebrew/bin ) then
+        set path = ( /opt/homebrew/bin $path )
+    endif
+endif

@@ -88,6 +88,7 @@
 ;;; ── Speedbar ───────────────────────────────────────────────────────
 
 (use-package sr-speedbar
+  :bind ("C-c s" . sr-speedbar-toggle)
   :config
   (setq speedbar-use-images nil)
 
@@ -101,10 +102,7 @@
 
   ;; optional but often helps visibility
   (setq speedbar-hide-button-brackets nil)
-  (setq speedbar-use-imenu-flag nil)
-
-  (sr-speedbar-open)
-  (speedbar-refresh))
+  (setq speedbar-use-imenu-flag nil))
 
 ;;; ── LSP GLOBAL CONFIG ──────────────────────────────────────────────
 

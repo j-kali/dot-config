@@ -180,6 +180,25 @@
 
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
 
+;;; ── Start Server ───────────────────────────────────────────────────
+
+(server-start)
+
+;;; ── wl-{copy,paste} ────────────────────────────────────────────────
+
+(defun wl-copy (text &optional _push)
+  (let ((process-connection-type nil))
+    (let ((proc (start-process "wl-copy" nil "wl-copy")))
+      (process-send-string proc text)
+      (process-send-eof proc))))
+
+(defun wl-paste ()
+  (shell-command-to-string "wl-paste -n"))
+
+(when (executable-find "wl-copy")
+  (setq interprogram-cut-function  #'wl-copy
+        interprogram-paste-function #'wl-paste))
+
 ;;; ── Custom file (let Emacs manage this) ────────────────────────────
 
 (custom-set-variables
